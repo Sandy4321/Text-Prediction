@@ -18,13 +18,14 @@ def csv_reader(file_obj,limit=float('inf')):
     data = []
     header = []
     for row in reader:
+        
         if len(header) == 0:
             header = row
         else:
             i = 0
             tweet = {}
             while i < len(row):
-                tweet[header[i]] = row[i]
+                tweet[header[i]] = unicode(row[i], 'utf-8')
                 i = i + 1
             data.append(tweet)
         if len(data) == limit: break        

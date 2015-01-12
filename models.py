@@ -107,6 +107,53 @@ class vocabulary:
 		return words
 
 
+class union_find():
+	
+	def __init__(self,n):
+		self.parent = n*[0]
+		self.rank = n*[0]
+		self.count = n
+		i = 0
+		while i < n:
+			self.parent[i] = i
+			self.rank[i] = i
+			i = i + 1
+	
+	def find(self,x):
+		if x == self.parent[x]:
+			return x
+		else:
+			self.parent[x] = self.find( self.parent[x] )
+			return self.parent[x]
+	
+	def union(self,x,y):
+		x_root = self.find(x)
+		y_root = self.find(y)
+		
+		if x_root != y_root:
+			self.count -= 1
+		
+		if self.rank[x_root] > self.rank[y_root]:
+			self.parent[y_root] = x_root
+			
+		else:
+			self.parent[x_root] = y_root
+			if self.rank[x_root] == self.rank[y_root]:
+				self.rank[y_root] += 1
+	
+	def count_components(self):
+		return self.count
+	
+	def same_component(self,x,y):
+		return self.find(x) == self.find(y)
+				
+'''		
+dsu = union_find(6)
+dsu.union(0,1)
+dsu.union(0,2)
+dsu.union(2,3)
+dsu.union(4,5)
+'''
 
 '''
 

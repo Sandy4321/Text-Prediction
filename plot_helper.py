@@ -50,18 +50,50 @@ def cmdscale(D):
  
     return Y, evals
 
-def plot(data):
+def plot(data,labels,clusters):
     mds = cmdscale(data)
     x = []
     y = []
     for t in mds[0]:
-        x.append(t[0])
-        y.append(t[1])
-
-    plt.scatter(x,y)
+        x.append(t[1])
+        y.append(t[0])
+    
+    
+    fig, ax = plt.subplots()
+    #colors = ([([0.4,1,0.4],[1,0.4,0.4],[0.1,0.8,1])[i] for i in clusters])
+    plt.scatter(x,y,c=clusters,s=100)
+    
+    if labels != None:
+        for i,label in enumerate(labels):
+            ax.annotate(label,(x[i],y[i]))
+    
+        
+    
     plt.ylabel('some numbers')
     plt.show()
 
+def plot_euclidean_points(data,labels,clusters):
+    x = []
+    y = []
+    for t in data:
+        x.append(t[0])
+        y.append(t[1])
+    
+    print x,y
+    
+    fig, ax = plt.subplots()
+    #colors = ([([0.4,1,0.4],[1,0.4,0.4],[0.1,0.8,1])[i] for i in clusters])
+    plt.scatter(x,y,c=clusters,s=100)
+    
+    if labels != None:
+        for i,label in enumerate(labels):
+            ax.annotate(label,(x[i],y[i]))
+    
+        
+    
+    plt.ylabel('some numbers')
+    plt.show()
+    
 def random_data(n):
     maxm = n
     m = n*[[maxm]*n]
