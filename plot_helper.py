@@ -50,6 +50,16 @@ def cmdscale(D):
  
     return Y, evals
 
+def to_x_y(data):
+    mds = cmdscale(data)
+    x = []
+    y = []
+    for t in mds[0]:
+        x.append(t[1])
+        y.append(t[0])
+    return x,y
+    
+
 def plot(data,labels,clusters):
     mds = cmdscale(data)
     x = []

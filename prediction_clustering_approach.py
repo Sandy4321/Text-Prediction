@@ -3,6 +3,7 @@ from models import vocabulary
 from math import fabs
 from models import union_find
 from random import randint
+from random import uniform
 import sys
 import plot_helper
 from collections import deque
@@ -95,6 +96,80 @@ def single_link_clustering(distance_matrix,k):
         clusters.append(dsu.find(i))
         i += 1
     return clusters
+
+def k_means_clustering(distance_matrix,k):
+    
+    def trunc(f, n):
+        slen = len('%.*f' % (n, f))
+        return float(str(f)[:slen])
+    
+    x,y = plot_helper.to_x_y(distance_matrix)
+    centroids = []
+    i = 0
+    minx = min(x)
+    miny = min(y)
+    maxx = max(x)
+    maxy = max(y)
+    while i < k:
+        centroids.append( (trunc(uniform(minx,maxx),3) ,trunc(uniform(miny,maxy),3)) )
+         
+        i += 1
+    
+    
+    
+    def distance(x1,y1,x2,y2):
+        return (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)
+    
+    def avg(a):
+        return sum(a)/len(a)
+    
+    def do_cluster(centroids,x_,y_):
+        clusters = {}
+        for j,coord in enumerate(zip(x_,y_)):
+            x,y = coord
+            cl = centroids[0]
+            idx = 0
+            for i,centroid in enumerate(centroids):
+                if distance(x,y,centroid[0],centroid[1]) < distance(x,y,cl[0],cl[1]):
+                    cl = (centroid[0],centroid[1])
+                    idx = i
+            
+            if idx not in clusters:
+                clusters[idx] = []
+       
+            clusters[idx].append(j)
+        
+        return clusters
+    
+    
+    clusters = do_cluster(centroids,x,y)
+    while True:
+        new_centroids = [0]*len(centroids)
+        for i in clusters:
+            xx,yy = 0,0
+            for idx in clusters[i]:
+                xx += x[idx]
+                yy += y[idx]
+            
+            xx = trunc(xx / len(clusters[i]),3)
+            yy = trunc(yy / len(clusters[i]),3)
+            
+            new_centroids[i] = xx,yy
+        
+        if (new_centroids) == (new_centroids):
+            break
+        clusters = do_cluster(centroid,x,y)
+    
+    
+    clusters_array = [0]*len(x)
+    for idx in clusters:
+        for i in clusters[idx]:
+            clusters_array[i] = idx
+    
+    print len(clusters)
+    return clusters_array
+    
+    
         
     
 def build_colors(clusters):
@@ -151,6 +226,21 @@ def test():
     plot_helper.plot_euclidean_points(points,None, build_colors(clusters))
     #plot_helper.plot(matrix,None, build_colors(single_link_clustering(matrix,4))) 
     
+def testkmeans():
+    max_tweets = 100
+    data = read_twitter_data("../tweets.csv",max_tweets) #threshold on maximum tweets, > 500 gets slower due to there is a lot of words.
+                                                 #That should be improved somehow in order to visualize data in a better way.
+    print "finish reading data"
+    adj =  build_distance(data)
+    print "finish building distance"
+    matrix,labels = build_adjacency_matrix(adj)
+    k = 10
+
+    clusters = k_means_clustering(matrix,k)
+    colors = build_colors(clusters)
+    plot_helper.plot(matrix,None, colors)     
     
-test_with_twitter_data()
+    
+#test_with_twitter_data()
+testkmeans()
 #test()
